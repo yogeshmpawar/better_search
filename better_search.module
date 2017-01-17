@@ -1,0 +1,50 @@
+<?php
+
+/**
+ * @file
+ * This module enables basic Better Search functionality.
+ *
+ * Provides better looking theming for the Drupal search block.
+ */
+
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Template\Attribute;
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function better_search_form_search_block_form_alter(&$form, FormStateInterface $form_state) {
+  $theme = \Drupal::config('better_search.settings')->get('theme');
+  switch ($theme) {
+    case 0:
+      $form['#attached']['library'][] = 'better_search/background_fade';
+      break;
+
+    case 1:
+      $form['#attached']['library'][] = 'better_search/expand_on_hover';
+      break;
+
+    case 2:
+      $form['#attached']['library'][] = 'better_search/increase_icon_size';
+      break;
+
+    case 3:
+      $form['#attached']['library'][] = 'better_search/on_hover_button';
+      break;
+
+  }
+
+  if ($theme == 3) {
+    $form['keys']['#suffix'] = '<div class="icon"><i class="better_search"></i></div>';
+  }
+  else {
+    $form['keys']['#prefix'] = '<div class="icon"><i class="better_search"></i></div>';
+  }
+  $form['keys']['#attributes']['placeholder'] = t(\Drupal::config('better_search.settings')->get('placeholder_text'));
+  $form['actions']['#attributes']['class'][] = 'visually-hidden';
+  $form['keys']['#size'] = \Drupal::config('better_search.settings')->get('size');
+}
+
+function better_search_preprocess_form_element(&$variables) {
+  $variables['attributes'] = new Attribute(array('class' => array('clearfix')));
+}
